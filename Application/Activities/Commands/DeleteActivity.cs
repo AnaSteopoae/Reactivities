@@ -20,6 +20,8 @@ public class DeleteActivity
         {
             var activity = await context.Activities.FindAsync([request.Id], cancellationToken);
             if (activity == null) throw new Exception("Activity not found");
+            context.Remove(activity);
+            await context.SaveChangesAsync(cancellationToken);
         }
     }
 }
