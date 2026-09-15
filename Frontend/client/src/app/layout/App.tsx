@@ -6,6 +6,8 @@ import ActivityDashboard from "../../features/activities/dashboard/ActivityDashb
 
 function App() {
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     axios.get<Activity[]>('https://localhost:44331/api/activities')
@@ -16,12 +18,60 @@ function App() {
     }
   }, [])
 
+  const handleSelectActivity = (id:string) =>{
+    setSelectedActivity(activities.find(x => x.id === id));
+  }
+
+  const handleCancelSelectedActivity = () => {
+    setSelectedActivity(undefined);
+  }
+
+  const handleOpenForm = (id?: string) => {
+    if(id) handleSelectActivity(id);
+    else handleCancelSelectedActivity();
+    setEditMode(true);
+  }
+
+  const handleCloseForm = () => {
+    setEditMode(false);
+  }
+
+  const handleSubmitForm = (activity: Activity) => {
+    if(activity.id) {
+      // Update existing activity
+      setActivities(activities.map(x => x.id===activity.id ? activity : x));
+    }
+    else{
+      const newActivity = {...activity, id: activities.length.toString()};
+      setSelectedActivity(newActivity);
+      setActivities([...activities, newActivity]);
+    }
+    setEditMode(false);
+  }
+
+  const handleDelete = (id:string) => {
+    setActivities(activities.filter(x => x.id !== id));
+    if(selectedActivity?.id === id) {
+      setSelectedActivity(undefined);
+    }
+  }
+
   return (
     <Box sx={{bgcolor:'#eeeeee'}}>
       <CssBaseline />
-      <NavBar />
+      <NavBar openForm={handleOpenForm} />
       <Container maxWidth="xl" sx={{ mt: 3 }}>
-        <ActivityDashboard activities={activities} />
+        <ActivityDashboard 
+        activities={activities}
+        selectActivity={handleSelectActivity}
+        cancelSelectedActivity={handleCancelSelectedActivity}
+        selectedActivity={selectedActivity}
+        editMode={editMode}
+        openForm={handleOpenForm}
+        closeForm={handleCloseForm}
+        submitForm={handleSubmitForm}
+        deleteActivity={handleDelete}
+        />
       </Container>
 
     </Box>
