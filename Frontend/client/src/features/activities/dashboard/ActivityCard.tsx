@@ -1,6 +1,7 @@
 import { AccessTime, Place } from "@mui/icons-material";
 import { Avatar, Box, Button, Card, CardActions, CardContent, CardHeader, Chip, Divider, Typography } from "@mui/material";
 import { Link } from "react-router";
+import { formatDate } from "../../../lib/util/util";
 
 type Props = {
     activity: Activity;
@@ -19,7 +20,9 @@ export default function ActivityCard({ activity }: Props) {
                 <CardHeader
                     avatar={<Avatar sx={{ height: 80, width: 80 }} />}
                     title={activity.title}
-                    titleTypographyProps={{ fontWeight: 'bold', fontSize: 20 }}
+                    slotProps={{
+                        title: { fontWeight: 'bold', fontSize: 20 }
+                    }}
                     subheader={
                         <>
                             Hosted by {' '}<Link to={`/profiles/bob`}>Bob</Link>
@@ -37,8 +40,11 @@ export default function ActivityCard({ activity }: Props) {
 
             <CardContent sx={{ p: 0 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', m: 2, px: 2 }}>
-                    <AccessTime sx={{ mr: 1 }} />
-                    <Typography variant="body2">{activity.date}</Typography>
+                    <Box sx={{ display: 'flex', flexGrow: 0, alignItems: 'center' }}>
+                        <AccessTime sx={{ mr: 1 }} />
+                        <Typography variant="body2" noWrap>{formatDate(activity.date)}</Typography>
+                    </Box>
+
                     <Place sx={{ ml: 3, mr: 1 }} />
                     <Typography variant="body2">{activity.venue}</Typography>
                 </Box>
