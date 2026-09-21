@@ -29,6 +29,9 @@ export default function NavBar() {
                             <Button component={NavLink} to='/counter' sx={{ color: 'inherit', textTransform: 'uppercase', fontWeight: 'bold' }}>
                                 Counter
                             </Button>
+                            <Button component={NavLink} to='/errors' sx={{ color: 'inherit', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                                Errors
+                            </Button>
                         </Box>
                         <Button >
                             User menu
