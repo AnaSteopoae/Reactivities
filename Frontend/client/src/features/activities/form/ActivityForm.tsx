@@ -1,13 +1,19 @@
 import { Paper, Typography, Box, TextField, Button } from "@mui/material";
 import { useActivities } from "../../../lib/hooks/useActivities";
 import { useParams } from "react-router";
-import { useForm, type FieldValues } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { activitySchema, type ActivitySchema } from "../../../lib/schemas/activitySchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import TextInput from "../../../app/shared/components/TextInput";
+import SelectInput from "../../../app/shared/components/SelectInput";
+import { categoryOptions } from "./categoryOptions";
+import DateTimeInput from "../../../app/shared/components/DateTimeInput";
+import LocationInput from "../../../app/shared/components/LocationInput";
 
 export default function ActivityForm() {
-    const { register, reset, handleSubmit, formState: { errors } } = useForm<ActivitySchema>({
+    const {control, reset, handleSubmit } = useForm<ActivitySchema>({
+        mode:'onTouched',
         resolver: zodResolver(activitySchema)
     });
     const { id } = useParams();
@@ -19,7 +25,7 @@ export default function ActivityForm() {
         }
     }, [activity, reset]);
 
-    const onSubmit = async (data: FieldValues) => {
+    const onSubmit = async (data: ActivitySchema) => {
         console.log(data)
 
     }
@@ -30,18 +36,11 @@ export default function ActivityForm() {
         <Paper sx={{ border: 3, padding: 3 }}>
             <Typography variant="h5" gutterBottom color="primary">{activity ? 'Edit Activity' : 'Create Activity'}</Typography>
             <Box component='form' onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                <TextField
-                    {...register("title")}
-                    label='Title'
-                    defaultValue={activity?.title} 
-                    error={!!errors.title}
-                    helperText={errors.title?.message as string}
-                />
-                <TextField {...register("date")} label='Date' type="date" defaultValue={activity?.date ? new Date(activity.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]} />
-                <TextField {...register("description")} label='Description' defaultValue={activity?.description} multiline rows={3} />
-                <TextField {...register("city")} label='City' defaultValue={activity?.city} />
-                <TextField {...register("venue")} label='Venue' defaultValue={activity?.venue} />
-                <TextField {...register("category")} label='Category' defaultValue={activity?.category} />
+                <TextInput label='Title' control={control} name='title' />
+                <DateTimeInput label='Date' control={control} name='date' />
+                <TextInput label='Description' control={control} name='description'multiline rows={3} />
+                <LocationInput label='Enter the location' control={control} name='location' />
+                <SelectInput items={categoryOptions} label='Category' control={control} name='category' />    
                 <Box sx={{ display: "flex", justifyContent: "end", gap: 3 }} >
                     <Button color="inherit">Cancel</Button>
                     <Button
