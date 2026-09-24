@@ -1,9 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import agent from "../api/agent";
 import { useLocation } from "react-router";
+import { useAccount } from "./useAccount";
 
 export const useActivities = (id: string) => {
     const queryClient = useQueryClient();
+    const {currentUser} = useAccount();
     const location = useLocation();
 
     const { data: activities, isPending } = useQuery(
@@ -13,7 +15,7 @@ export const useActivities = (id: string) => {
         const response = await agent.get<Activity[]>('/activities');
         return response.data;
       },
-      enabled: !id && location.pathname === '/activities' //rulaza doar daca id ul nu este valid si suntem pe pagina de activities
+      enabled: !id && location.pathname === '/activities' && !!currentUser, //rulaza doar daca id ul nu este valid si suntem pe pagina de activities
     });
 
     const {data: activity, isLoading: isLoadingActivity} = useQuery({
@@ -22,7 +24,7 @@ export const useActivities = (id: string) => {
             const response = await agent.get<Activity>(`/activities/${id}`);
             return response.data;
         },
-        enabled: !!id //rulaza doar daca id ul este valid 
+        enabled: !!id  && !!currentUser, //rulaza doar daca id ul este valid 
     });
 
     const updateActivity = useMutation({

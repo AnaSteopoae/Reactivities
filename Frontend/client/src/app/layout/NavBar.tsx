@@ -3,10 +3,13 @@ import { Box, AppBar, Toolbar, Typography, Button, Container, LinearProgress } f
 import { NavLink } from 'react-router'
 import { useStore } from '../../lib/hooks/useStore';
 import { Observer } from 'mobx-react-lite';
+import { useAccount } from '../../lib/hooks/useAccount';
+import UserMenu from './UserMenu';
 
 
 export default function NavBar() {
     const {uiStore} = useStore();
+    const {currentUser} = useAccount();
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -23,9 +26,7 @@ export default function NavBar() {
                             <Button component={NavLink} to='/activities' sx={{ color: 'inherit', textTransform: 'uppercase', fontWeight: 'bold' }}>
                                 Activities
                             </Button>
-                            <Button component={NavLink} to='/createActivity' sx={{ color: 'inherit', textTransform: 'uppercase', fontWeight: 'bold' }}>
-                                Create Activity
-                            </Button>
+
                             <Button component={NavLink} to='/counter' sx={{ color: 'inherit', textTransform: 'uppercase', fontWeight: 'bold' }}>
                                 Counter
                             </Button>
@@ -33,9 +34,23 @@ export default function NavBar() {
                                 Errors
                             </Button>
                         </Box>
-                        <Button >
-                            User menu
-                        </Button>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}> 
+                            {currentUser ? (
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                    <UserMenu/>
+                                </Typography>
+                            ): (
+                                <>
+                                <Button component={NavLink} to='/login' sx={{ color: 'inherit', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                                    Login
+                                </Button>
+                                <Button component={NavLink} to='/register' sx={{ color: 'inherit', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                                    Register
+                                </Button>
+                                
+                                </>
+                            )}
+                        </Box>
                     </Toolbar>
                 </Container>
 
