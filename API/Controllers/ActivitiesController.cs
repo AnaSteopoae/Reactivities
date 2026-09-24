@@ -1,26 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Activities.Commands;
-using Application.Activities.Queries;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Domain;
 using Application.Activities.DTOs;
+using Application.Activities.Queries;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 public class ActivitiesController : BaseApiController
 {
-   
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<List<Domain.Activity>>> GetActivities()
     {
-        return await Mediator.Send( new GetActivityList.Query());
+        return await Mediator.Send(new GetActivityList.Query());
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<ActionResult<Domain.Activity>> GetActivityDetail(string id)
     {
@@ -37,7 +32,7 @@ public class ActivitiesController : BaseApiController
     public async Task<ActionResult> EditActivity(EditActivityDto activity)
     {
         return HandleResult(await Mediator.Send(new EditActivity.Command { ActivityDto = activity }));
-        
+
     }
 
     [HttpDelete("{id}")]
