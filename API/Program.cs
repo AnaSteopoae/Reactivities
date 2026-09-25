@@ -40,6 +40,12 @@ builder.Services.AddIdentityApiEndpoints<User>(opt =>
 }).AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<AppDbContext>();
 
+builder.Services.ConfigureApplicationCookie(opt =>
+{
+    opt.Cookie.SameSite = SameSiteMode.None;
+    opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

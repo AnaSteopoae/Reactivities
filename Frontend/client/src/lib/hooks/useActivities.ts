@@ -8,7 +8,7 @@ export const useActivities = (id: string) => {
     const {currentUser} = useAccount();
     const location = useLocation();
 
-    const { data: activities, isPending } = useQuery(
+    const { data: activities, isLoading } = useQuery(
     {
       queryKey: ['activities'],
       queryFn: async () => {
@@ -64,7 +64,7 @@ export const useActivities = (id: string) => {
     return { 
         activities, 
         updateActivity,
-        isPending, 
+        isLoading, 
         createActivity,
         deleteActivity,
         isLoadingActivity,

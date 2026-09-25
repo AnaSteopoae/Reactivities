@@ -14,24 +14,19 @@ public class AccountController(SignInManager<User> signInManager) : BaseApiContr
     {
         var user = new User
         {
-            UserName = registerDto.DisplayName,
+            UserName = registerDto.Email,
             Email = registerDto.Email,
             DisplayName = registerDto.DisplayName
         };
 
         var result = await signInManager.UserManager.CreateAsync(user, registerDto.Password);
 
-        if (!result.Succeeded)
-        {
-            return BadRequest("Failed to create user");
-        }
+        if (result.Succeeded) return Ok();
 
-        return Ok();
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError(error.Code, error.Description);
         }
-
         return ValidationProblem(ModelState);
     }
 
