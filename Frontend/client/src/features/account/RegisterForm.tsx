@@ -31,7 +31,7 @@ export default function RegisterForm() {
 
     return (
         <Paper component='form' onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', gap: 3, p: 3, maxWidth: 'md', borderRadius: 3, mx: 'auto' }}>
-            <Box sx={{ diplay: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, color: 'secondary.main' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, color: 'secondary.main' }}>
                 <LockOpen fontSize="large" />
                 <Typography variant="h4">Register</Typography>
             </Box>

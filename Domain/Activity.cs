@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace Domain;
 
 public class Activity
@@ -19,4 +14,7 @@ public class Activity
     public required string Venue { get; set; }
     public double Latitude { get; set; }
     public double Longitude { get; set; }
+
+    //navigation props
+    public ICollection<ActivityAttendee> Attendees { get; set; } = [];
 }
