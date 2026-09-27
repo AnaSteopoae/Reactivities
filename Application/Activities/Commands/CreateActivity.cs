@@ -1,6 +1,8 @@
 ﻿using Application.Activities.DTOs;
 using Application.Core;
+using Application.Interfaces;
 using AutoMapper;
+using Domain;
 using MediatR;
 using Persistence;
 
@@ -15,13 +17,23 @@ public class CreateActivity
 
     }
 
-    public class Handler(AppDbContext context, IMapper mapper) : IRequestHandler<Command, Result<string>>
+    public class Handler(AppDbContext context, IMapper mapper, IUserAccessor userAccessor) : IRequestHandler<Command, Result<string>>
     {
         public async Task<Result<string>> Handle(Command request, CancellationToken cancellationToken)
         {
+            var user = await userAccessor.GetUserAsync();
 
             var activity = mapper.Map<Domain.Activity>(request.ActivityDto);
             context.Activities.Add(activity);
+
+            var atendee = new ActivityAttendee
+            {
+                User = user,
+                Activity = activity,
+                IsHost = true,
+                DateJoined = DateTime.UtcNow
+            };
+
             var result = await context.SaveChangesAsync(cancellationToken) > 0;
             if (!result) return Result<string>.Failure("Failed to create activity", 500);
             return Result<string>.Success(activity.Id);

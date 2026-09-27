@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Text;
+using Application.Interfaces;
+using Domain;
+using Microsoft.AspNetCore.Http;
+using Persistence;
+
+namespace Infrastructure;
+
+public class UserAccessor(IHttpContextAccessor httpContextAccessor, AppDbContext dbContext) : IUserAccessor
+{
+    public async Task<User> GetUserAsync()
+    {
+        return await dbContext.Users.FindAsync(GetUSerId())
+            ?? throw new UnauthorizedAccessException("No user is logged in");
+    }
+
+    public string GetUSerId()
+    {
+        return httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? throw new Exception("No user found");
+    }
+}
