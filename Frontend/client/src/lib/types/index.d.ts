@@ -1,4 +1,4 @@
-type Activity =  {
+type Activity = {
   id: string
   title: string
   description: string
@@ -13,7 +13,7 @@ type Activity =  {
   isGoing: boolean
   isHost: boolean
   hostId: string
-  hostUsername: string
+  hostDisplayName: string
 }
 
 
@@ -24,10 +24,10 @@ type Profile = {
   imageUrl?: string
 }
 
-type User ={
+type User = {
   id: string,
   email: string,
-  displayName:  string,
+  displayName: string,
   imageUrl?: string,
 }
 
@@ -53,7 +53,7 @@ type LocationIQAddress = {
   road: string
   suburb?: string
   town?: string
-  village?:string
+  village?: string
   city?: string
   county: string
   state: string

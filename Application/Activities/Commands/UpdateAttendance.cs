@@ -48,8 +48,8 @@ public class UpdateAttendance
             var result = await context.SaveChangesAsync(cancellationToken) > 0;
 
             return result
-                ? Result<Unit>.Failure("Problem updating the DB", 400)
-                : Result<Unit>.Success(Unit.Value);
+                ? Result<Unit>.Success(Unit.Value)
+                : Result<Unit>.Failure("Problem updating the DB", 400);
         }
     }
 }

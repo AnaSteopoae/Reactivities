@@ -77,6 +77,52 @@ export const useActivities = (id: string) => {
         }
     })
 
+    const updateAttendence = useMutation({
+        mutationFn: async (id: string) => {
+            await agent.post(`/activities/${id}/attend`)
+        },
+        onMutate: async (activityId: string) => {
+            await queryClient.cancelQueries({
+                queryKey: ['activities', activityId]
+            });
+
+            const prevActivity = queryClient.getQueryData<Activity>(['activities', activityId]);
+
+
+            queryClient.setQueryData<Activity>(['activities', activityId], oldActivity => {
+                if (!oldActivity || !currentUser) {
+                    return oldActivity
+                }
+
+                const isHost = oldActivity.hostId === currentUser.id;
+                const isAttending = oldActivity.attendees.some(a => a.id === currentUser.id);
+
+                return {
+                    ...oldActivity,
+                    isCancelled: isHost ? !oldActivity.isCancelled : oldActivity.isCancelled,
+                    attendees: isAttending
+                        ? isHost
+                            ? oldActivity.attendees
+                            : oldActivity.attendees.filter(a => a.id !== currentUser.id)
+                        : [...oldActivity.attendees, {
+                            id: currentUser.id,
+                            displayName: currentUser.displayName,
+                            imageUrl: currentUser.imageUrl
+                        }],
+                }
+            });
+
+            return { prevActivity };
+        },
+        onError: (error, activityId, context) => {
+            console.log('Previous activity: ' + context?.prevActivity);
+            console.log(error);
+            if (context?.prevActivity) {
+                queryClient.setQueryData<Activity>(['activities', activityId], context.prevActivity);
+            }
+        }
+    })
+
     return {
         activities,
         updateActivity,
@@ -84,6 +130,7 @@ export const useActivities = (id: string) => {
         createActivity,
         deleteActivity,
         isLoadingActivity,
-        activity
+        activity,
+        updateAttendence
     };
 }

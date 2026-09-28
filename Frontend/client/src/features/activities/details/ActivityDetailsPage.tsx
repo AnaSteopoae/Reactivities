@@ -9,22 +9,21 @@ import ActivityDetailsChat from "./ActivityDetailsChat";
 
 export default function ActivityDetailsPage() {
   const navigate = useNavigate();
-  const {id} = useParams();
-  const {activities, isLoadingActivity} = useActivities(id ?? "");
-  const activity = activities?.find(activity => activity.id === id);
+  const { id } = useParams();
+  const { activity, isLoadingActivity } = useActivities(id ?? "");
 
-  if(isLoadingActivity) return <Typography>Loading...</Typography>
-  if(!activity) return <Typography>Activity not found </Typography>
+  if (isLoadingActivity) return <Typography>Loading...</Typography>
+  if (!activity) return <Typography>Activity not found </Typography>
 
   return (
     <Grid container spacing={3}>
       <Grid size={8}>
-        <ActivityDetailsHeader activity = {activity}/>
-        <ActivityDetailsInfo activity = {activity}/>
+        <ActivityDetailsHeader activity={activity} />
+        <ActivityDetailsInfo activity={activity} />
         <ActivityDetailsChat />
       </Grid>
       <Grid size={4}>
-        <ActivityDetailsSidebar />
+        <ActivityDetailsSidebar activity={activity} />
       </Grid>
     </Grid>
   )
