@@ -1,70 +1,86 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import agent from "../api/agent";
-import { useLocation } from "react-router";
+import { data, useLocation } from "react-router";
 import { useAccount } from "./useAccount";
 
 export const useActivities = (id: string) => {
     const queryClient = useQueryClient();
-    const {currentUser} = useAccount();
+    const { currentUser } = useAccount();
     const location = useLocation();
 
     const { data: activities, isLoading } = useQuery(
-    {
-      queryKey: ['activities'],
-      queryFn: async () => {
-        const response = await agent.get<Activity[]>('/activities');
-        return response.data;
-      },
-      enabled: !id && location.pathname === '/activities' && !!currentUser, //rulaza doar daca id ul nu este valid si suntem pe pagina de activities
-    });
+        {
+            queryKey: ['activities'],
+            queryFn: async () => {
+                const response = await agent.get<Activity[]>('/activities');
+                return response.data;
+            },
+            enabled: !id && location.pathname === '/activities' && !!currentUser, //rulaza doar daca id ul nu este valid si suntem pe pagina de activities
+            select: data => {
+                return data.map(activity => {
+                    return {
+                        ...activity,
+                        isHost: currentUser?.id === activity.hostId,
+                        isGoing: activity.attendees.some(a => a.id === currentUser?.id)
+                    }
+                })
+            }
+        });
 
-    const {data: activity, isLoading: isLoadingActivity} = useQuery({
+    const { data: activity, isLoading: isLoadingActivity } = useQuery({
         queryKey: ['activities', id],
         queryFn: async () => {
             const response = await agent.get<Activity>(`/activities/${id}`);
             return response.data;
         },
-        enabled: !!id  && !!currentUser, //rulaza doar daca id ul este valid 
+        enabled: !!id && !!currentUser, //rulaza doar daca id ul este valid 
+        select: data => {
+            return {
+                ...data,
+                isHost: currentUser?.id === data.hostId,
+                isGoing: data.attendees.some(a => a.id === currentUser?.id)
+            }
+        }
     });
 
     const updateActivity = useMutation({
-        mutationFn: async (activity : Activity) => {
+        mutationFn: async (activity: Activity) => {
             await agent.put('/activities', activity)
         },
-        onSuccess:async() => {
-            await queryClient.invalidateQueries({ 
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
                 queryKey: ['activities']
             });
         }
     })
 
     const createActivity = useMutation({
-        mutationFn: async (activity : Activity) => {
-           const response = await agent.post('/activities', activity)
-           return response.data;
+        mutationFn: async (activity: Activity) => {
+            const response = await agent.post('/activities', activity)
+            return response.data;
         },
-        onSuccess:async() => {
-            await queryClient.invalidateQueries({ 
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
                 queryKey: ['activities']
             });
         }
     })
 
-     const deleteActivity = useMutation({
-        mutationFn: async (id : string) => {
+    const deleteActivity = useMutation({
+        mutationFn: async (id: string) => {
             await agent.delete(`/activities/${id}`)
         },
-        onSuccess:async() => {
-            await queryClient.invalidateQueries({ 
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
                 queryKey: ['activities']
             });
         }
     })
 
-    return { 
-        activities, 
+    return {
+        activities,
         updateActivity,
-        isLoading, 
+        isLoading,
         createActivity,
         deleteActivity,
         isLoadingActivity,
