@@ -34,6 +34,8 @@ public class CreateActivity
                 DateJoined = DateTime.UtcNow
             };
 
+            activity.Attendees.Add(atendee);
+
             var result = await context.SaveChangesAsync(cancellationToken) > 0;
             if (!result) return Result<string>.Failure("Failed to create activity", 500);
             return Result<string>.Success(activity.Id);
