@@ -6,5 +6,5 @@ namespace Application.Interfaces;
 public interface IPhotoService
 {
     Task<PhotoUploadResult?> UploadPhoto(IFormFile file);
-    Task<string> DeleltePhoto(string publicId);
+    Task<string> DeletePhoto(string publicId);
 }

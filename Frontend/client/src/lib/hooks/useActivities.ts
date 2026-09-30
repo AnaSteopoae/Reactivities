@@ -18,10 +18,12 @@ export const useActivities = (id: string) => {
             enabled: !id && location.pathname === '/activities' && !!currentUser, //rulaza doar daca id ul nu este valid si suntem pe pagina de activities
             select: data => {
                 return data.map(activity => {
+                    const host = activity.attendees.find(a => a.id === activity.hostId);
                     return {
                         ...activity,
                         isHost: currentUser?.id === activity.hostId,
-                        isGoing: activity.attendees.some(a => a.id === currentUser?.id)
+                        isGoing: activity.attendees.some(a => a.id === currentUser?.id),
+                        hostImageUrl: host?.imageUrl
                     }
                 })
             }
@@ -35,10 +37,12 @@ export const useActivities = (id: string) => {
         },
         enabled: !!id && !!currentUser, //rulaza doar daca id ul este valid 
         select: data => {
+            const host = data.attendees.find(a => a.id === data.hostId);
             return {
                 ...data,
                 isHost: currentUser?.id === data.hostId,
-                isGoing: data.attendees.some(a => a.id === currentUser?.id)
+                isGoing: data.attendees.some(a => a.id === currentUser?.id),
+                hostImageUrl: host?.imageUrl
             }
         }
     });
