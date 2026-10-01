@@ -13,6 +13,7 @@ public class PhotoService : IPhotoService
     private readonly Cloudinary _cloudinary;
     public PhotoService(IOptions<CloudinarySettings> config)
     {
+        Console.WriteLine($"CloudName='{config.Value.CloudName}' ApiKey='{config.Value.ApiKey}' SecretLen={config.Value.ApiSecret?.Length}");
         var account = new Account(
             config.Value.CloudName,
             config.Value.ApiKey,
