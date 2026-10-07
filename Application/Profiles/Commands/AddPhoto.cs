@@ -21,7 +21,9 @@ public class AddPhoto
         public async Task<Result<Photo>> Handle(Command request, CancellationToken cancellationToken)
         {
             var uploadResult = await photoAccessor.UploadPhoto(request.File);
+
             if (uploadResult == null) return Result<Photo>.Failure("Problem uploading photo", 500);
+
             var user = await userAccessor.GetUserAsync();
             var photo = new Photo
             {
@@ -32,7 +34,9 @@ public class AddPhoto
 
             user.ImageUrl ??= photo.Url;
             context.Photos.Add(photo);
+
             var result = await context.SaveChangesAsync(cancellationToken) > 0;
+
             if (!result) return Result<Photo>.Failure("Problem saving photo to database", 500);
             return Result<Photo>.Success(photo);
         }

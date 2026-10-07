@@ -13,7 +13,6 @@ public class PhotoService : IPhotoService
     private readonly Cloudinary _cloudinary;
     public PhotoService(IOptions<CloudinarySettings> config)
     {
-        Console.WriteLine($"CloudName='{config.Value.CloudName}' ApiKey='{config.Value.ApiKey}' SecretLen={config.Value.ApiSecret?.Length}");
         var account = new Account(
             config.Value.CloudName,
             config.Value.ApiKey,
@@ -42,8 +41,7 @@ public class PhotoService : IPhotoService
 
             var uploadParams = new ImageUploadParams
             {
-                File = new CloudinaryDotNet.FileDescription(file.FileName, stream),
-                //Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("face")
+                File = new FileDescription(file.FileName, stream),
                 Folder = "Reactivities"
             };
 

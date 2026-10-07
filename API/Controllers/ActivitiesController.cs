@@ -29,7 +29,7 @@ public class ActivitiesController : BaseApiController
     }
 
     [HttpPut("{id}")]
-    //[Authorize(Policy = "IsActivityHost")]
+    [Authorize(Policy = "IsActivityHost")]
     public async Task<ActionResult> EditActivity(string id, EditActivityDto activityDto)
     {
         activityDto.Id = id;

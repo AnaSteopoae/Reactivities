@@ -1,7 +1,7 @@
 import { Box, debounce, List, ListItemButton, TextField, Typography, type TextFieldProps } from "@mui/material"
 import { useEffect, useMemo, useState } from "react";
 import { useController, type FieldValues, type UseControllerProps } from "react-hook-form"
-import type { LocationIQSuggestion } from "../../../lib/types";
+import type { LocationIQSuggestion } from "../../../lib/types"
 import axios from "axios";
 
 type Props<T extends FieldValues> = {
@@ -15,9 +15,9 @@ export default function LocationInput<T extends FieldValues>(props: Props<T>) {
     const [inputValue, setInputValue] = useState(field.value || '');
 
     useEffect(() => {
-        if(field.value && typeof field.value === 'object') {
+        if (field.value && typeof field.value === 'object') {
             setInputValue(field.value.venue || '');
-        }else {
+        } else {
             setInputValue(field.value || '');
         }
     }, [field.value]);
@@ -26,7 +26,7 @@ export default function LocationInput<T extends FieldValues>(props: Props<T>) {
 
     const fetchSuggestions = useMemo(
         () => debounce(async (query: string) => {
-            if(!query || query.length < 3) {
+            if (!query || query.length < 3) {
                 setSuggestions([]);
                 return;
             }
@@ -36,7 +36,7 @@ export default function LocationInput<T extends FieldValues>(props: Props<T>) {
                 const data = await res.data;
                 setSuggestions(data);
             } catch (error) {
-                console.log( error);
+                console.log(error);
             } finally {
                 setLoading(false);
             }
@@ -75,12 +75,12 @@ export default function LocationInput<T extends FieldValues>(props: Props<T>) {
             />
             {loading && <Typography>Loading...</Typography>}
             {suggestions.length > 0 && (
-                <List sx={{border:1}}>
+                <List sx={{ border: 1 }}>
                     {suggestions.map((suggestion) => (
-                       <ListItemButton divider key={suggestion.place_id} onClick={() => handleSelect(suggestion)}>
-
-                       </ListItemButton>
-                        ))}
+                        <ListItemButton divider key={suggestion.place_id} onClick={() => handleSelect(suggestion)}>
+                            {suggestion.display_name}
+                        </ListItemButton>
+                    ))}
                 </List>
             )}
 

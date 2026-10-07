@@ -18,6 +18,7 @@ public class IsHostRequirementHandler(AppDbContext dbContext, IHttpContextAccess
     {
         var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null) return;
+
         var httpContext = httpContextAccessor.HttpContext;
         if (httpContext?.GetRouteValue("id") is not string activityId) return;
 

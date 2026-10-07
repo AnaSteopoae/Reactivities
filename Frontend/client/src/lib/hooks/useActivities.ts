@@ -15,7 +15,7 @@ export const useActivities = (id: string) => {
                 const response = await agent.get<Activity[]>('/activities');
                 return response.data;
             },
-            enabled: !id && location.pathname === '/activities' && !!currentUser, //rulaza doar daca id ul nu este valid si suntem pe pagina de activities
+            enabled: !id && location.pathname === '/activities' && !!currentUser, //ruleaza doar daca id ul nu este valid si suntem pe pagina de activities
             select: data => {
                 return data.map(activity => {
                     const host = activity.attendees.find(a => a.id === activity.hostId);
@@ -35,7 +35,7 @@ export const useActivities = (id: string) => {
             const response = await agent.get<Activity>(`/activities/${id}`);
             return response.data;
         },
-        enabled: !!id && !!currentUser, //rulaza doar daca id ul este valid 
+        enabled: !!id && !!currentUser, //ruleaza doar daca id ul est valid
         select: data => {
             const host = data.attendees.find(a => a.id === data.hostId);
             return {
@@ -49,7 +49,7 @@ export const useActivities = (id: string) => {
 
     const updateActivity = useMutation({
         mutationFn: async (activity: Activity) => {
-            await agent.put('/activities', activity)
+            await agent.put(`/activities/${activity.id}`, activity)
         },
         onSuccess: async () => {
             await queryClient.invalidateQueries({

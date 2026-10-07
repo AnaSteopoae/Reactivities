@@ -18,6 +18,7 @@ public class SetMainPhoto
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
             var user = await userAccessor.GetUserWithPhotosAsync();
+
             var photo = user.Photos.FirstOrDefault(x => x.Id == request.PhotoId);
 
             if (photo == null) return Result<Unit>.Failure("Photo not found", 400);
