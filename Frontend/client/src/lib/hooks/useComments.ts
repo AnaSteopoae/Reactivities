@@ -21,7 +21,7 @@ export const useComments = (activityId: string) => {
 
             this.hubConnection.start().catch(error => console.log('Error establishing connection', error));
 
-            this.hubConnection.on('LoadComment', comment => {
+            this.hubConnection.on('LoadComments', comment => {
                 runInAction(() => {
                     this.comments = comment; 
                 })

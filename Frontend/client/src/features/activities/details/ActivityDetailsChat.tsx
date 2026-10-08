@@ -12,7 +12,7 @@ const ActivityDetailsChat = observer(function ActivityDetailsChat() {
 
     const addComment = async (data: FieldValues) => {
         try {
-            await commentStore.hubConnection?.invoke('Send Comment', { activityId: id, body: data.body });
+            await commentStore.hubConnection?.invoke('SendComment', { activityId: id, body: data.body });
             reset();
         } catch (error) {
             console.log(error);
