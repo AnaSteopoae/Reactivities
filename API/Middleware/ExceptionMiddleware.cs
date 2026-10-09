@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Linq;
+﻿using Application.Core;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using Application.Core;
 using System.Text.Json;
 
 
@@ -19,9 +13,9 @@ public class ExceptionMiddleware(ILogger<ExceptionMiddleware> logger, IHostEnvir
         {
             await next(context);
         }
-        catch(ValidationException ex)
+        catch (ValidationException ex)
         {
-           await HandleValidationException(context, ex);
+            await HandleValidationException(context, ex);
         }
         catch (Exception ex)
         {
@@ -40,19 +34,17 @@ public class ExceptionMiddleware(ILogger<ExceptionMiddleware> logger, IHostEnvir
         var json = JsonSerializer.Serialize(response, options);
         await context.Response.WriteAsync(json);
     }
-    
+
 
     private static async Task HandleValidationException(HttpContext context, ValidationException ex)
     {
         var validationErrors = new Dictionary<string, string[]>();
-        if(ex.Errors is not null)
+        if (ex.Errors is not null)
         {
-            foreach(var error in ex.Errors)
+            foreach (var error in ex.Errors)
             {
                 if (validationErrors.TryGetValue(error.PropertyName, out var existingErrors))
-                {
                     validationErrors[error.PropertyName] = existingErrors.Append(error.ErrorMessage).ToArray();
-                }
                 else
                 {
                     validationErrors[error.PropertyName] = new[] { error.ErrorMessage };

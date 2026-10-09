@@ -3,7 +3,7 @@ import agent from "../api/agent";
 import { useMemo } from "react";
 import type { EditProfileSchema } from "../schemas/editProfileSchema";
 
-export const useProfile = (id: string, predicate?:string) => {
+export const useProfile = (id?: string, predicate?:string) => {
     const queryClient = useQueryClient();
 
 

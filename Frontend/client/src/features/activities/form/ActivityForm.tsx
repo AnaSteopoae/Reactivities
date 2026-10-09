@@ -1,4 +1,4 @@
-import { Paper, Typography, Box, TextField, Button } from "@mui/material";
+import { Paper, Typography, Box, Button } from "@mui/material";
 import { useActivities } from "../../../lib/hooks/useActivities";
 import { useNavigate, useParams } from "react-router";
 import { useForm } from "react-hook-form";

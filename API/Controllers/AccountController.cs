@@ -28,6 +28,10 @@ public class AccountController(SignInManager<User> signInManager) : BaseApiContr
             ModelState.AddModelError(error.Code, error.Description);
         }
         return ValidationProblem(ModelState);
+
+        //modifica folosind MediatR
+
+        //return HandleResult(await Mediator.Send());
     }
 
 
