@@ -34,9 +34,11 @@ public class GetActivityList
                     _ => query
                 };
             }
-            var projectActivities = query.ProjectTo<ActivityDTO>(mapper.ConfigurationProvider, new { currentUserId = userAccessor.GetUSerId() })
 
-            var activities = await query
+            var projectActivities = query
+                .ProjectTo<ActivityDTO>(mapper.ConfigurationProvider, new { currentUserId = userAccessor.GetUSerId() });
+
+            var activities = await projectActivities
                 .Take(request.Params.PageSize + 1)
                 .ToListAsync(cancellationToken);
 
@@ -45,7 +47,6 @@ public class GetActivityList
             {
                 nextCursor = activities.Last().Date;
                 activities.RemoveAt(activities.Count - 1);
-
             }
 
             return Result<PagedList<ActivityDTO, DateTime?>>.Success(new PagedList<ActivityDTO, DateTime?>

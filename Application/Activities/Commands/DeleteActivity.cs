@@ -1,11 +1,8 @@
 ﻿using Application.Core;
+using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
 namespace Application.Activities.Commands;
 
@@ -16,14 +13,22 @@ public class DeleteActivity
         public required string Id { get; set; }
     }
 
-    public class Handler(AppDbContext context) : IRequestHandler<Command, Result<Unit>>
+    public class Handler(AppDbContext context, IUserAccessor userAccessor)
+        : IRequestHandler<Command, Result<Unit>>
     {
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var activity = await context.Activities.FindAsync([request.Id], cancellationToken);
+            var activity = await context.Activities
+                .Include(a => a.Attendees)
+                .FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);
 
-            if(activity ==null) return Result<Unit>.Failure("Activity not found", 404);
+            if (activity == null) return Result<Unit>.Failure("Activity not found", 404);
 
+            // verificarea de host direct in handler (inlocuieste policy-ul IsActivityHost)
+            var userId = userAccessor.GetUSerId();
+            var isHost = activity.Attendees.Any(a => a.IsHost && a.UserId == userId);
+            if (!isHost)
+                return Result<Unit>.Failure("You are not the host of this activity", 403);
 
             context.Remove(activity);
             var result = await context.SaveChangesAsync(cancellationToken) > 0;
@@ -32,4 +37,3 @@ public class DeleteActivity
         }
     }
 }
-

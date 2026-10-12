@@ -1,4 +1,4 @@
-﻿using API.DTOs;
+﻿using Application.Accounts.Commands;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,38 +10,20 @@ public class AccountController(SignInManager<User> signInManager) : BaseApiContr
 {
     [AllowAnonymous]
     [HttpPost("register")]
-    public async Task<IActionResult> RegisterUser(RegisterDto registerDto)
+    public async Task<ActionResult> RegisterUser(Register.Command command)
     {
-        var user = new User
-        {
-            UserName = registerDto.Email,
-            Email = registerDto.Email,
-            DisplayName = registerDto.DisplayName
-        };
-
-        var result = await signInManager.UserManager.CreateAsync(user, registerDto.Password);
-
-        if (result.Succeeded) return Ok();
-
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError(error.Code, error.Description);
-        }
-        return ValidationProblem(ModelState);
-
-        //modifica folosind MediatR
-
-        //return HandleResult(await Mediator.Send());
+        return HandleResult(await Mediator.Send(command));
     }
-
 
     [AllowAnonymous]
     [HttpGet("user-info")]
     public async Task<ActionResult> GetUserInfo()
     {
         if (User.Identity?.IsAuthenticated == false) return NoContent();
+
         var user = await signInManager.UserManager.GetUserAsync(User);
         if (user == null) return Unauthorized();
+
         return Ok(new
         {
             user.DisplayName,
@@ -50,7 +32,6 @@ public class AccountController(SignInManager<User> signInManager) : BaseApiContr
             user.ImageUrl
         });
     }
-
 
     [HttpPost("logout")]
     public async Task<ActionResult> Logout()

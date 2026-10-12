@@ -1,26 +1,31 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import agent from "../api/agent";
 import { useLocation } from "react-router";
 import { useAccount } from "./useAccount";
+import { useStore } from "./useStore";
 
 export const useActivities = (id?: string) => {
+    const {activityStore: { filter, startDate }} = useStore();
     const queryClient = useQueryClient();
     const { currentUser } = useAccount();
     const location = useLocation();
 
     const { data: activitiesGroup, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery<PagedList<Activity, string>>(
         {
-            queryKey: ['activities'],
+            queryKey: ['activities', filter, startDate],
             queryFn: async ({ pageParam = null }) => {
                 const response = await agent.get<PagedList<Activity, string>>('/activities', {
                     params: {
                         cursor: pageParam,
-                        pageSize: 3
+                        pageSize: 3,
+                        filter,
+                        startDate
                     }
                 });
                 return response.data;
             },
             staleTime: 1000 * 60 * 5,
+            placeholderData: keepPreviousData,
             initialPageParam: null,
             getNextPageParam: (lastPage) => lastPage.nextCursor,
             enabled: !id && location.pathname === '/activities' && !!currentUser, //ruleaza doar daca id ul nu este valid si suntem pe pagina de activities
@@ -47,7 +52,7 @@ export const useActivities = (id?: string) => {
             const response = await agent.get<Activity>(`/activities/${id}`);
             return response.data;
         },
-        enabled: !!id && !!currentUser, //ruleaza doar daca id ul est valid
+        enabled: !!id && !!currentUser, //ruleaza doar daca id ul est valid si currentuser real 
         select: data => {
             const host = data.attendees.find(a => a.id === data.hostId);
             return {

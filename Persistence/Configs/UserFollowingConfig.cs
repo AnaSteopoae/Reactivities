@@ -1,6 +1,14 @@
-﻿namespace Persistence.Configs;
+﻿using Domain;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-public class UserFollowingConfig
+namespace Persistence.Configs;
+
+public class UserFollowingConfig : IEntityTypeConfiguration<UserFollowing>
 {
-
+    public void Configure(EntityTypeBuilder<UserFollowing> builder)
+    {
+        builder.Property(a => a.ObserverId).IsRequired();
+        builder.Property(a => a.TargetId).IsRequired();
+    }
 }

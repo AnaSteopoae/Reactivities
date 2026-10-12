@@ -19,6 +19,8 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(op
     {
         base.OnModelCreating(builder); //configureaza tabelele pentru Identity
 
+        builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+
 
         builder.Entity<ActivityAttendee>(x => x.HasKey(a => new { a.ActivityId, a.UserId }));
 

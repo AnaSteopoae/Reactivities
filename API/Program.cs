@@ -60,16 +60,6 @@ builder.Services.ConfigureApplicationCookie(opt =>
     opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
-builder.Services.AddAuthorization(opt =>
-{
-    opt.AddPolicy("IsActivityHost", policy =>
-    {
-        policy.Requirements.Add(new IsHostRequirement());
-    });
-});
-
-builder.Services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
-
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 var app = builder.Build();

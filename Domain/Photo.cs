@@ -6,14 +6,14 @@ public class Photo
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
-    public required string Url { get; set; }
+    public string Url { get; set; }
 
-    public required string PublicId { get; set; }
+    public string PublicId { get; set; }
 
     //nav properties
 
     [JsonIgnore]
     public User User { get; set; } = null!;
-    public required string UserId { get; set; }
+    public string UserId { get; set; }
 }
 
