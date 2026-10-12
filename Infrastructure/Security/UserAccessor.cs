@@ -23,7 +23,6 @@ public class UserAccessor(IHttpContextAccessor httpContextAccessor, AppDbContext
 
     public async Task<User> GetUserWithPhotosAsync()
     {
-
         var userId = GetUSerId();
         return await dbContext.Users
             .Include(p => p.Photos)

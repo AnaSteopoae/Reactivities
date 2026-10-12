@@ -23,6 +23,7 @@ public class GetActivityDetails
             var activity = await context.Activities
                 .ProjectTo<ActivityDTO>(mapper.ConfigurationProvider, new { currentUserId = userAccessor.GetUSerId() })
                 .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+
             if (activity == null) return Result<ActivityDTO>.Failure("Activity not found", 404);
             return Result<ActivityDTO>.Success(activity);
         }

@@ -1,4 +1,5 @@
-import { Button, styled, type ButtonProps, type LinkProps } from "@mui/material";
+import {  styled, type ButtonProps, Button } from "@mui/material";
+import { type LinkProps } from 'react-router'; 
 
 type StyledButtonProps = ButtonProps & Partial<LinkProps>;
 

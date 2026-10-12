@@ -23,7 +23,7 @@ public class CreateActivity
         {
             var user = await userAccessor.GetUserAsync();
 
-            var activity = mapper.Map<Domain.Activity>(request.ActivityDto);
+            var activity = mapper.Map<Activity>(request.ActivityDto);
             context.Activities.Add(activity);
 
             var atendee = new ActivityAttendee

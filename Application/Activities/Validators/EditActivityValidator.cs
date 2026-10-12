@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Application.Activities.Commands;
+﻿using Application.Activities.Commands;
 using Application.Activities.DTOs;
 using FluentValidation;
 
