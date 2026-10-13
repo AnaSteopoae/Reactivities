@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { formatDate } from "../../../lib/util/util";
 import { useActivities } from "../../../lib/hooks/useActivities";
 import StyleButton from "../../../app/shared/components/StyledButton";
+import { useAccount } from "../../../lib/hooks/useAccount";
 
 type Props = {
     activity: Activity
@@ -10,6 +11,10 @@ type Props = {
 
 export default function ActivityDetailsHeader({ activity }: Props) {
     const { updateAttendence } = useActivities(activity.id);
+    const {currentUser} = useAccount();
+
+    const isAdmin = currentUser?.roles.includes('Admin') ?? false;
+    const canManage = activity.isHost || isAdmin;
 
     return (
         <Card sx={{ position: 'relative', mb: 2, backgroundColor: 'transparent', overflow: 'hidden' }}>
@@ -50,7 +55,7 @@ export default function ActivityDetailsHeader({ activity }: Props) {
 
                 {/* Buttons aligned to the right */}
                 <Box sx={{ display: 'flex', gap: 2 }}>
-                    {activity.isHost ? (
+                    {canManage ? (
                         <>
                             <StyleButton
                                 variant='contained'

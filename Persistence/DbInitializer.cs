@@ -5,8 +5,15 @@ namespace Persistence
 {
     public class DbInitializer
     {
-        public static async Task SeedData(AppDbContext context, UserManager<User> userManager)
+        public static async Task SeedData(AppDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
+            var roles = new[] { "Admin", "Member" };
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                    await roleManager.CreateAsync(new IdentityRole(role));
+            }
+
             var users = new List<User>
             {
                 new() {Id="bob-id", DisplayName = "Bob", UserName = "bob@test.com", Email = "bob@test.com"},
@@ -20,8 +27,22 @@ namespace Persistence
                 foreach (var user in users)
                 {
                     await userManager.CreateAsync(user, "Pa$$w0rd");
+                    await userManager.AddToRoleAsync(user, "Member");
                 }
+
+                var admin = new User
+                {
+                    Id = "admin-id",
+                    DisplayName = "Admin",
+                    UserName = "admin@test.com",
+                    Email = "admin@test.com"
+                };
+
+                await userManager.CreateAsync(admin, "Pa$$w0rd");
+                await userManager.AddToRoleAsync(admin, "Admin");
             }
+
+
 
             if (context.Activities.Any()) return;
             var activities = new List<Domain.Activity>

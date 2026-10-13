@@ -20,7 +20,7 @@ public class GetProfilePhotos
             var photos = await context.Users
                 .Where(p => p.Id == request.UserId)
                 .SelectMany(x => x.Photos)
-                .ToListAsync<Photo>(cancellationToken);
+                .ToListAsync(cancellationToken);
 
             return Result<List<Photo>>.Success(photos);
         }

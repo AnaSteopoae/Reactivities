@@ -24,8 +24,9 @@ public class EditActivity
                 return Result<Unit>.Failure("Activity not found", 404);
 
             var userId = userAccessor.GetUSerId();
+            var isAdmin = userAccessor.IsInRole("Admin");
             var isHost = activity.Attendees.Any(a => a.IsHost && a.UserId == userId);
-            if (!isHost)
+            if (!isHost && !isAdmin)
                 return Result<Unit>.Failure("You are not the host of this activity", 403);
 
 

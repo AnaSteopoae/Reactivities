@@ -24,12 +24,15 @@ public class AccountController(SignInManager<User> signInManager) : BaseApiContr
         var user = await signInManager.UserManager.GetUserAsync(User);
         if (user == null) return Unauthorized();
 
+        var roles = await signInManager.UserManager.GetRolesAsync(user);
+
         return Ok(new
         {
             user.DisplayName,
             user.Email,
             user.Id,
-            user.ImageUrl
+            user.ImageUrl,
+            Roles = roles
         });
     }
 

@@ -26,19 +26,25 @@ public class GetUserActivities
             .OrderBy(a => a.Activity.Date)
             .Select(x => x.Activity)
             .AsQueryable();
+
             var today = DateTime.UtcNow;
+
             query = request.Filter switch
             {
                 "past" => query.Where(a => a.Date <= today
                 && a.Attendees.Any(x => x.UserId == request.UserId)),
+
                 "hosting" => query.Where(a => a.Attendees.Any(x => x.IsHost
                 && x.UserId == request.UserId)),
+
                 _ => query.Where(a => a.Date >= today
                 && a.Attendees.Any(x => x.UserId == request.UserId))
             };
-            var projectedActivities = query
-            .ProjectTo<UserActivityDto>(mapper.ConfigurationProvider);
+
+            var projectedActivities = query.ProjectTo<UserActivityDto>(mapper.ConfigurationProvider);
+
             var activities = await projectedActivities.ToListAsync(cancellationToken);
+
             return Result<List<UserActivityDto>>.Success(activities);
         }
     }

@@ -24,14 +24,17 @@ public class DeleteActivity
 
             if (activity == null) return Result<Unit>.Failure("Activity not found", 404);
 
-            // verificarea de host direct in handler (inlocuieste policy-ul IsActivityHost)
+
             var userId = userAccessor.GetUSerId();
+            var isAdmin = userAccessor.IsInRole("Admin");
             var isHost = activity.Attendees.Any(a => a.IsHost && a.UserId == userId);
-            if (!isHost)
+
+            if (!isHost && !isAdmin)
                 return Result<Unit>.Failure("You are not the host of this activity", 403);
 
             context.Remove(activity);
             var result = await context.SaveChangesAsync(cancellationToken) > 0;
+
             if (!result) return Result<Unit>.Failure("Failed to delete activity", 500);
             return Result<Unit>.Success(Unit.Value);
         }

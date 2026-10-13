@@ -26,7 +26,6 @@ export const router = createBrowserRouter([
                 { path: 'manage/:id', element: <ActivityForm /> },
                 { path: 'profiles/:id', element: <ProfilePage /> },
             ]},
-            { path: '', element: <HomePage /> },
             { path: 'counter', element: <Counter /> },
             { path: 'errors', element: <TestErrors /> },
             { path: 'not-found', element: <NotFound /> },

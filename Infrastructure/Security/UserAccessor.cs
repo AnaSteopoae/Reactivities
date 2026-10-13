@@ -29,4 +29,6 @@ public class UserAccessor(IHttpContextAccessor httpContextAccessor, AppDbContext
             .FirstOrDefaultAsync(x => x.Id == userId)
             ?? throw new UnauthorizedAccessException("No user is logged in");
     }
+
+    public bool IsInRole(string role) => httpContextAccessor.HttpContext!.User.IsInRole(role);
 }

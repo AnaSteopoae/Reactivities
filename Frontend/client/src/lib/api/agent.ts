@@ -21,13 +21,13 @@ agent.interceptors.request.use(config => {
 
 agent.interceptors.response.use(
     async response => {
-        if (import.meta.env.Dev) await sleep(1000);
+        if (import.meta.env.DEV) await sleep(1000);
         store.uiStore.isIdle();
         return response;
 
     },
     async error => {
-        if (import.meta.env.Dev)await sleep(1000);
+        if (import.meta.env.DEV)await sleep(1000);
         store.uiStore.isIdle();
 
         const { status, data } = error.response;
