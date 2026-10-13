@@ -7,7 +7,7 @@ namespace Persistence
     {
         public static async Task SeedData(AppDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
-            var roles = new[] { "Admin", "Member" };
+            var roles = new[] { "Admin", "Member", "Moderator" };
             foreach (var role in roles)
             {
                 if (!await roleManager.RoleExistsAsync(role))
@@ -40,6 +40,16 @@ namespace Persistence
 
                 await userManager.CreateAsync(admin, "Pa$$w0rd");
                 await userManager.AddToRoleAsync(admin, "Admin");
+
+                var moderator = new User
+                {
+                    Id = "mod-id",
+                    DisplayName = "Moderator",
+                    UserName = "moderator@test.com",
+                    Email = "moderator@test.com"
+                };
+                await userManager.CreateAsync(moderator, "Pa$$w0rd");
+                await userManager.AddToRoleAsync(moderator, "Moderator");
             }
 
 

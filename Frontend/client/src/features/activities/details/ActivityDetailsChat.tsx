@@ -1,14 +1,20 @@
-import { Box, Typography, Card, CardContent, TextField, Avatar, CircularProgress } from "@mui/material";
+import { Box, Typography, Card, CardContent, TextField, Avatar, CircularProgress, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Link, useParams } from "react-router";
 import { useComments } from "../../../lib/hooks/useComments";
 import { timeAgo } from "../../../lib/util/util";
 import { useForm, type FieldValues } from "react-hook-form";
 import { observer } from "mobx-react-lite";
+import { useAccount } from "../../../lib/hooks/useAccount";
 
 const ActivityDetailsChat = observer(function ActivityDetailsChat() {
     const { id } = useParams();
     const { commentStore } = useComments(id ?? "");
     const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm();
+    const { currentUser } = useAccount();
+
+    const canModerate = (currentUser?.roles?.includes('Moderator')
+        || currentUser?.roles?.includes('Admin')) ?? false;
 
     const addComment = async (data: FieldValues) => {
         try {
@@ -19,8 +25,8 @@ const ActivityDetailsChat = observer(function ActivityDetailsChat() {
         }
     }
 
-    const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement> )=> {
-        if(event.key === 'Enter' && !event.shiftKey) {
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
             handleSubmit(addComment)();
         }
@@ -52,7 +58,7 @@ const ActivityDetailsChat = observer(function ActivityDetailsChat() {
                                 placeholder="Enter your comment (Enter to submit, SHIFT + Enter for new line)"
                                 onKeyDown={handleKeyPress}
                                 slotProps={{
-                                    input:{
+                                    input: {
                                         endAdornment: isSubmitting ? (<CircularProgress size={24} />) : null
                                     }
                                 }}
@@ -72,6 +78,16 @@ const ActivityDetailsChat = observer(function ActivityDetailsChat() {
                                         <Typography variant="body2" color="textSecondary">
                                             {timeAgo(comment.createdAt)}
                                         </Typography>
+                                        {(canModerate || comment.userId === currentUser?.id) && (
+                                            <IconButton
+                                                size="small"
+                                                color="error"
+                                                onClick={() => commentStore.deleteComment(comment.id)}
+                                                sx={{ ml: 'auto' }}
+                                            >
+                                                <DeleteIcon fontSize="small" />
+                                            </IconButton>
+                                        )}
                                     </Box>
 
                                     <Typography sx={{ whiteSpace: 'pre-wrap' }}>{comment.body}</Typography>

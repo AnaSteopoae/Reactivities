@@ -30,4 +30,18 @@ public class CommentHub(IMediator mediator) : Hub
 
         await Clients.Caller.SendAsync("LoadComments", result.Value);
     }
+
+    public async Task DeleteComment(string commentId)
+    {
+        var result = await mediator.Send(new DeleteComment.Command { CommentId = commentId });
+
+        if (result.IsSuccess)
+        {
+            await Clients.Group(result.Value!).SendAsync("CommentDeleted", commentId);
+        }
+        else
+        {
+            throw new HubException(result.Error);
+        }
+    }
 }

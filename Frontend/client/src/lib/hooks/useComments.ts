@@ -23,9 +23,9 @@ export const useComments = (activityId: string) => {
 
             this.hubConnection.on('LoadComments', comment => {
                 runInAction(() => {
-                    this.comments = comment; 
+                    this.comments = comment;
                 })
-                
+
             });
 
             this.hubConnection.on('ReceiveComment', comment => {
@@ -33,11 +33,25 @@ export const useComments = (activityId: string) => {
                     this.comments.unshift(comment);
                 });
             });
+
+            this.hubConnection.on('CommentDeleted', (commentId: string) => {
+                runInAction(() => {
+                    this.comments = this.comments.filter(c => c.id !== commentId);
+                });
+            });
         },
 
         stopHubConnection() {
             if (this.hubConnection?.state === HubConnectionState.Connected) {
                 this.hubConnection.stop().catch(error => console.log('Error stopping connection', error));
+            }
+        },
+
+        async deleteComment(commentId: string) {
+            try {
+                await this.hubConnection?.invoke('DeleteComment', commentId);
+            } catch (error) {
+                console.log('Error deleting comment', error);
             }
         }
     }));
@@ -56,6 +70,5 @@ export const useComments = (activityId: string) => {
 
     return {
         commentStore,
-
     }
 }
